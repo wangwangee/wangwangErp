@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	   	<!-- 마이바티스의 동작을 제어하는 설정 태그 = <Settings> -->
+	<!-- properties 밑에, typeAliases 위에 위치해야한다 -->
+ 
+	<typeAliases>
+	 
+	 	<typeAlias type="com.example.Vo.UserVo"      alias="uservo"/>
+ 		<typeAlias type="com.example.Vo.GoodsVo"      alias="goodsvo"/>
+ 		<typeAlias type="com.example.Vo.ProfitVo"      alias="profitvo"/>
+ 		<typeAlias type="com.example.Vo.ManagementVo"      alias="managementvo"/>
+ 		<typeAlias type="com.example.Vo.AnnualSalesVo"      alias="annualSalesvo"/>
+ 		
+ 		<typeAlias type="com.example.Vo.ImportVo"  alias="importvo"/>
+ 		<typeAlias type="com.example.Vo.ExportVo"  alias="exportvo"/>
+ 		<typeAlias type="com.example.Vo.MapVo"  alias="mapvo"/>
+    </typeAliases>	
+  
+	<mappers>
+ 
+ 
+		<mapper resource="user.xml" />
+		<mapper resource="goods.xml" />
+		<mapper resource="profit.xml" />
+		<mapper resource="management.xml" />
+		<mapper resource="chartManagement.xml" />
+		<mapper resource="map.xml" />
+	</mappers>
+ 
+	 
+</configuration>
+
+ 

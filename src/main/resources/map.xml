@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.Dao.MapDao">
+	<!-- 거래처 등록-->
+	<insert id="accountRecord" parameterType="mapvo">
+		 INSERT INTO map(
+		 	id,import_store,latitude,longitude
+		 )
+		 VALUES(
+		 	#{id},#{import_store},#{latitude},#{longitude}
+		 )
+		 
+	</insert>
+	<!-- 거래처 보여주기 -->
+	<select id ="accountView" parameterType="String" resultType="mapvo">
+		SELECT MAP.seq, MAP.import_store, MAP.latitude,MAP.longitude
+		FROM MAP, GOODS
+		WHERE MAP.import_store = GOODS.import_store
+		AND SUBSTR(GOODS.import_mdate,1,8) =#{yyyyMMdd}
+	</select>
+	<!-- map 수정하기 -->
+	<update id="accountUpdate" parameterType ="mapvo">
+		UPDATE map
+		SET import_store =#{import_store}, latitude = #{latitude},longitude =#{longitude}
+		WHERE seq = #{seq}
+	</update>
+	
+	
+	 <!--map Detail에서 삭제 /수정을 위한 부분 -->
+  	<select id ="nameUpdateDetail" parameterType="hashmap" resultType="mapvo">
+		SELECT  *
+		FROM map
+		WHERE seq =#{seq}
+	</select>
+	<!-- 삭제 -->
+	<delete id ="accountRemove" parameterType="int">
+		DELETE FROM map
+		WHERE seq =#{seq}
+	
+	</delete>
+ 	<!-- 등록 전에 있는 곳인지 조회하기 -->
+	<select id="beforeAccountRecord">
+		SELECT import_store
+		FROM map
+		WHERE import_store =#{import_store}
+		
+	</select>
+	
+</mapper>

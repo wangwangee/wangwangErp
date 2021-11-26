@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.Dao.GoodsDao">
+	<!-- 입출고 -->
+	<insert id="importGoods" parameterType="goodsvo">
+		INSERT INTO goods(
+		 id, category, import_mdate,name,import_store,import_price,import_amount,info,pay,refund
+		)
+		VALUES(
+		 #{id},#{category},#{import_mdate},#{name},#{import_store},#{import_price},#{import_amount},#{info},#{pay},#{refund}
+		)
+	</insert>
+	
+	<update id="exportGoods" parameterType="goodsvo">
+	<![CDATA[
+		UPDATE  goods
+		SET id = #{id}, 
+			category =#{category},
+			export_mdate= #{export_mdate} ,
+			export_store = #{export_store},
+			export_price = #{export_price},
+			export_amount = #{export_amount},
+			export_year_month = #{export_year_month}
+		WHERE id =#{id} AND
+			  name = #{name} AND
+			  category = #{category}	
+	 ]]>	 
+	</update>
+	
+ 
+	<!-- Calendar에 리스트 ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ여기다시하기10월19일-->
+	<select id ="calImportList" parameterType="hashmap"  resultType="importvo"> 
+		<![CDATA[
+		SELECT seq, name , import_amount, import_price, import_mdate, import_store, pay,refund
+		FROM(	
+				SELECT seq, name, import_amount, import_price, import_mdate, import_store,pay,refund, ROW_NUMBER()OVER(PARTITION BY SUBSTR(import_mdate,1,8) ORDER BY import_mdate) AS RN 
+				FROM  goods
+				WHERE id =#{id} AND SUBSTR(import_mdate,1,6) = #{yyyyMM}
+			) RN
+		WHERE RN BETWEEN 1 AND 2		
+		]]> 	
+  	</select>
+	<select id ="calExportList" parameterType="hashmap"  resultType="exportvo"> 
+		<![CDATA[
+		SELECT seq, name , export_amount, export_price, export_mdate, export_store
+		FROM(	
+				SELECT seq, name, export_amount, export_price, export_mdate, export_store ,ROW_NUMBER()OVER(PARTITION BY SUBSTR(export_mdate,1,8) ORDER BY export_mdate) AS RN
+				FROM  goods
+				WHERE id =#{id} AND SUBSTR(export_mdate,1,6) = #{yyyyMM}
+			)RN	
+		WHERE RN BETWEEN 1 AND 2		
+		]]> 	
+  	</select>
+ 	<!-- Calendar에  count 리스트 --> 	
+	  <select id ="ImportcalCount" parameterType="hashmap" resultType="int">
+  		SELECT COUNT(*)
+  		FROM goods
+  		WHERE ID=#{id} AND SUBSTR(import_mdate,1,8) = #{yyyyMMdd}
+  	</select>
+  	
+  	<select id ="ExportcalCount" parameterType="hashmap" resultType="int">
+  		SELECT COUNT(*)
+  		FROM goods
+  		WHERE ID=#{id} AND SUBSTR(export_mdate,1,8) = #{yyyyMMdd}
+  	</select>
+  	
+  	<!-- <10.08>일정 목록조회하기 --> 
+  	<select id ="calImportBoardList"  parameterType="hashmap"  resultType="importvo">
+  	SELECT seq, name , import_amount, import_price, import_mdate, import_store, pay,refund
+  	FROM goods
+  	WHERE  id =#{id} AND SUBSTR(import_mdate,1,8) = #{yyyyMMdd}
+  	ORDER BY import_mdate
+  	</select>
+  	<select id ="calExportBoardList"  parameterType="hashmap"  resultType="exportvo">
+  	SELECT seq, name , export_amount, export_price, export_mdate, export_store
+  	FROM goods
+  	WHERE id =#{id} AND SUBSTR(export_mdate,1,8) = #{yyyyMMdd}
+  	ORDER BY export_mdate
+  	</select>
+  	<!-- <10.19> 결제하고 후 처리 -->
+  	<update id ="goodsBuying" parameterType="hashmap" >
+  	<![CDATA[
+
+  	 UPDATE goods 
+  	 SET pay =#{pay} 
+  	 WHERE id =#{id}  
+  	 	   AND seq =#{seq}  
+  	]]> 
+  	</update>
+  	<!--import 일정 자세히 보기 -->
+  	<select id ="calDetail" parameterType="int" resultType="goodsvo">
+		SELECT id,seq,category,import_mdate,name,import_store,import_price,import_amount
+		FROM goods
+		WHERE seq =#{seq}
+	</select>
+	<!--import 일정 수정하기 -->
+  	<update id ="calUpdate" parameterType="goodsvo"  >
+	
+		Update  goods
+		SET CATEGORY =#{category}, IMPORT_MDATE =#{import_mdate},
+			NAME=#{name}, IMPORT_STORE=#{import_store},
+			IMPORT_PRICE=#{import_price},IMPORT_AMOUNT=#{import_amount},
+			INFO=#{info}
+		WHERE SEQ=#{seq}
+	
+	</update>
+  	<!-- 일정수정할 때, import_price, import_amount가져와서 수정과 다른지 비교하기 위한 select -->
+  	<select id ="compareProfitAmount" parameterType="int" resultType="goodsvo">
+  	 SELECT name,import_amount, import_price,import_mdate
+   	 FROM goods
+  	 WHERE  SEQ=#{seq}
+  	
+  	</select>
+  	
+  	
+  	<!-- export 일정 자세히 보기 -->
+  	<select id ="calDetail_export" parameterType="int" resultType="goodsvo">
+		SELECT id,seq,category,export_mdate,name,export_store,export_price,export_amount
+		FROM goods
+		WHERE seq =#{seq}
+	</select>
+  	<!--export 일정 수정하기 -->
+  	<update id ="calUpdate_export" parameterType="goodsvo"  >
+	
+		Update  goods
+		SET CATEGORY =#{category}, EXPORT_MDATE =#{export_mdate},
+			NAME=#{name}, EXPORT_STORE=#{export_store},
+			EXPORT_PRICE=#{export_price},EXPORT_AMOUNT=#{export_amount},
+			INFO=#{info}
+		WHERE SEQ=#{seq}
+	
+	</update>
+	 <!-- 일정수정할 때, export_price, export_amount가져와서 수정과 다른지 비교하기 위한 select -->
+  	<select id ="compareProfitAmount_export" parameterType="int" resultType="goodsvo">
+  	 SELECT name,export_amount, export_price,export_mdate
+   	 FROM goods
+  	 WHERE  SEQ=#{seq}
+  	
+  	</select>
+ <!-- export 일정 수정할 때 기존의 갯수를 가져와서, management테이블과 더해서 // 수정하려는 값보다 양이 커야한다 -->
+ 	<select id ="previousAmountCount" parameterType="int" resultType="int">
+ 	SELECT export_amount
+ 	FROM goods 
+ 	WHERE SEQ=#{seq}
+ 	</select>
+ <!-- import 일정 수정할 때 goods에 있는 export 갯수를 가져와서 list로 가져가서 합해서 비교하기  -->
+ <!-- import 일정 수정할 때 goods에 있는 import 갯수를 가져와서 list로 가져가서 합해서 비교하기  -->
+</mapper>	

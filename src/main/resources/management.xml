@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.Dao.ManagementDao">
+	<!-- 입고 -->
+	<update id="importGoods" parameterType="managementvo">
+	<![CDATA[
+	    INSERT INTO management
+		VALUES (
+				null
+			,  #{id}
+			, #{name}
+			, #{amount}
+		)
+		ON DUPLICATE KEY UPDATE
+			amount = amount + #{amount}
+			
+	]]>	  	
+	</update>
+	
+	<!-- 출고 -->
+	<update id="exportGoods" parameterType="managementvo">
+	<![CDATA[
+	    INSERT INTO management
+		VALUES (
+				null
+			,  #{id}
+			, #{name}
+			, amount - #{amount}
+
+ 
+		)
+		ON DUPLICATE KEY UPDATE 
+			amount = amount - #{amount}
+	]]>	  	
+	</update>
+  	<select id ="improtCheckBeforeExport" parameterType="String" resultType="String">
+	  	SELECT name
+	  	FROM management
+	  	WHERE name =#{name}
+ 	</select>
+     <select id ="improtCheckBeforeExportAmount" parameterType="String" resultType="int">
+        SELECT amount 
+        FROM management
+        WHERE name =#{name}
+     </select>
+</mapper>	

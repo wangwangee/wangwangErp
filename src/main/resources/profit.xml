@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.Dao.ProfitDao">
+	<!-- 수익 넣기 -->
+	<update id="importGoods" parameterType="profitvo">
+	<![CDATA[
+	    INSERT INTO profit
+		VALUES (
+			null
+			, #{id}
+			, #{mdate}
+			, #{total_income}
+			, #{year}
+			, #{month}
+			, #{month_amount}
+		)
+		ON DUPLICATE KEY UPDATE
+			total_income = total_income + #{total_income}
+			
+	]]>	  	
+	</update>
+ 	<update id="exportGoods" parameterType="profitvo">
+	<![CDATA[
+	    INSERT INTO profit
+		VALUES (
+			null
+			, #{id}
+			, #{mdate}
+			, #{total_income}
+			, #{year}
+			, #{month}
+			, #{month_amount}
+		)
+		ON DUPLICATE KEY UPDATE
+			total_income = total_income + #{total_income},
+			month_amount = month_amount + #{month_amount}
+			
+	]]>	  	
+	</update>
+ 
+</mapper>	

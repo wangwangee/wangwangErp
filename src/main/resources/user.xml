@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.Dao.UserDao">
+	<!-- 회원가입 -->
+	<insert id="join" parameterType="uservo">
+		INSERT INTO member(
+		id
+		,pwd
+		,name
+		)
+		VALUES(
+		#{id}
+		,#{pwd}
+		,#{name}
+		)
+	</insert>
+
+	<select id="login" parameterType="uservo" resultType="uservo">
+		SELECT name,id
+		FROM member
+		WHERE id = #{id}
+		AND pwd = #{pwd}
+	</select>
+	
+	<select id="getUser" parameterType="String" resultType="uservo">
+		SELECT name,id
+		FROM member
+		WHERE id = #{id}
+		 
+	</select>
+	<update id="update" parameterType="uservo">
+		UPDATE member
+		SET name= #{name},
+			pwd = #{pwd} 
+		WHERE id =#{id}
+	</update>
+	<delete id ="withdraw" parameterType="uservo" >
+		DELETE FROM member
+		WHERE id =#{id}
+		AND pwd =#{pwd}
+	</delete>
+	
+</mapper>
+  

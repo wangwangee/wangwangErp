@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.Dao.ChartDao">
+ 
+	<!-- 2021을 스트링으로 받아서,int형으로 변환해주는 cast함수사용 -->
+	<select id="annualSaleChart" parameterType ="hashmap" resultType="annualSalesvo">
+		SELECT mdate,total_income
+		FROM profit
+		WHERE id =#{id} AND year=CAST(#{year} AS SIGNED)
+		ORDER BY mdate 
+	</select>
+	<!-- bestItems 순위로 가져오기 -->
+	<select id ="bestItems" parameterType ="hashmap" resultType ="goodsvo" >
+		SELECT name ,SUM(export_amount)AS export_amount
+		FROM (
+				SELECT name, export_amount
+				FROM goods
+				WHERE id = #{id} AND substr(export_mdate,1,6) =#{yyyyMM}
+			)RN 
+		GROUP BY name 
+		ORDER BY SUM(export_amount) desc
+		LIMIT 0, 5
+	</select> 
+	 
+	 
+</mapper>
+
+
